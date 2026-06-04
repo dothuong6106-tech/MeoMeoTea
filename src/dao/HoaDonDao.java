@@ -50,7 +50,29 @@ public class HoaDonDao {
             throw new DatabaseException("Lỗi lấy danh sách hóa đơn", e);
         }
     }
+    
+    //Thêm hóa đơn
+    public boolean insert(HoaDon hd) {
 
+        String sql = "INSERT INTO HoaDon(maHD, ngayLap, tongTien, maKH, maNV) VALUES (?, ?, ?, ?, ?)";
+
+        try {
+            Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setString(1, hd.getMaHD());
+            ps.setTimestamp(2, hd.getNgayLap());
+            ps.setDouble(3, hd.getTongTien());
+            ps.setString(4, hd.getMaKH());
+            ps.setString(5, hd.getMaNV());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi thêm hóa đơn", e);
+        }
+    }
+    
     // Tìm hóa đơn theo mã
     public HoaDon findById(String maHD) {
 
@@ -82,6 +104,31 @@ public class HoaDonDao {
         }
     }
 
+    // Cập nhật tổng tiền
+    public boolean update(HoaDon hd) {
+
+        String sql = "UPDATE HoaDon SET tongTien = ? WHERE maHD = ?";
+
+        try {
+            Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setDouble(1, hd.getTongTien());
+            ps.setString(2, hd.getMaHD());
+
+            int rows = ps.executeUpdate();
+
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy hóa đơn: " + hd.getMaHD());
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi cập nhật hóa đơn", e);
+        }
+    }
+    
     // Sắp xếp tổng tiền tăng dần
     public ArrayList<HoaDon> sapXepTongTienTangDan() {
 

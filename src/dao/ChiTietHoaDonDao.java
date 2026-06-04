@@ -59,4 +59,27 @@ public class ChiTietHoaDonDao {
             throw new DatabaseException("Lỗi lấy chi tiết hóa đơn", e);
         }
     }
+    
+    // Thêm chi tiết hóa đơn
+    public boolean insert(ChiTietHoaDon ct) {
+
+        String sql = "INSERT INTO ChiTietHoaDon(maHD, maSP, tenSP, soLuong, donGia, thanhTien) VALUES (?, ?, ?, ?, ?, ?)";
+
+        try {
+            Connection con = DBConnection.getConnection();
+            PreparedStatement ps = con.prepareStatement(sql);
+
+            ps.setString(1, ct.getMaHD());
+            ps.setString(2, ct.getMaSP());
+            ps.setString(3, ct.getTenSP());
+            ps.setInt(4, ct.getSoLuong());
+            ps.setDouble(5, ct.getDonGia());
+            ps.setDouble(6, ct.getThanhTien());
+
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi thêm chi tiết hóa đơn", e);
+        }
+    }
 }
