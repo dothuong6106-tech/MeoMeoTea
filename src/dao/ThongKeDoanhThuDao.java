@@ -6,10 +6,12 @@ package dao;
 
 import database.DBConnection;
 import model.ThongKeDoanhThu;
+import exception.DatabaseException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 /**
  *
@@ -67,12 +69,11 @@ public class ThongKeDoanhThuDao {
 
                 ds.add(tk);
             }
+            return ds;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy thống kê doanh thu", e);
         }
-
-        return ds;
     }
 
     // Sắp xếp doanh thu tăng dần
@@ -126,12 +127,11 @@ public class ThongKeDoanhThuDao {
 
                 ds.add(tk);
             }
+            return ds;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp doanh thu tăng dần", e);
         }
-
-        return ds;
     }
 
     // Sắp xếp doanh thu giảm dần
@@ -185,11 +185,10 @@ public class ThongKeDoanhThuDao {
 
                 ds.add(tk);
             }
+            return ds;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp doanh thu giảm dần", e);
         }
-
-        return ds;
     }
 }

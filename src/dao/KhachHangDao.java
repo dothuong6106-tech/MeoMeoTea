@@ -6,10 +6,13 @@ package dao;
 
 import database.DBConnection;
 import model.KhachHang;
+import exception.DatabaseException;
+import exception.NotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 /**
  *
@@ -40,12 +43,10 @@ public class KhachHangDao {
 
                 ds.add(kh);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy danh sách khách hàng", e);
         }
-
-        return ds;
     }
 
     // Thêm khách hàng
@@ -65,11 +66,9 @@ public class KhachHangDao {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi thêm khách hàng", e);
         }
-
-        return false;
     }
 
     // Sửa khách hàng
@@ -93,13 +92,17 @@ public class KhachHangDao {
             ps.setString(3, kh.getDiaChi());
             ps.setString(4, kh.getMaKH());
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy khách hàng: " + kh.getMaKH());
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi cập nhật khách hàng", e);
         }
-
-        return false;
     }
 
     // Xóa khách hàng
@@ -114,13 +117,17 @@ public class KhachHangDao {
 
             ps.setString(1, maKH);
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy khách hàng: " + maKH);
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi xóa khách hàng", e);
         }
-
-        return false;
     }
 
     // Tìm khách hàng theo mã
@@ -146,11 +153,10 @@ public class KhachHangDao {
                         rs.getString("diaChi")
                 );
             }
+            throw new NotFoundException("Không tìm thấy khách hàng: " + maKH);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi tìm khách hàng theo mã", e);
         }
-
-        return null;
     }
 }

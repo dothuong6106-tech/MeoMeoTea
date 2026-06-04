@@ -6,10 +6,13 @@ package dao;
 
 import database.DBConnection;
 import model.HoaDon;
+import exception.DatabaseException;
+import exception.NotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 /**
  *
@@ -42,12 +45,10 @@ public class HoaDonDao {
 
                 ds.add(hd);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy danh sách hóa đơn", e);
         }
-
-        return ds;
     }
 
     // Tìm hóa đơn theo mã
@@ -74,12 +75,11 @@ public class HoaDonDao {
                         rs.getString("maNV")
                 );
             }
+            throw new NotFoundException("Không tìm thấy hóa đơn: " + maHD);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi tìm hóa đơn theo mã", e);
         }
-
-        return null;
     }
 
     // Sắp xếp tổng tiền tăng dần
@@ -107,12 +107,10 @@ public class HoaDonDao {
                         rs.getString("maNV")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp hóa đơn tăng dần", e);
         }
-
-        return ds;
     }
 
     // Sắp xếp tổng tiền giảm dần
@@ -140,11 +138,9 @@ public class HoaDonDao {
                         rs.getString("maNV")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp hóa đơn giảm dần", e);
         }
-
-        return ds;
     }
 }

@@ -6,10 +6,13 @@ package dao;
 
 import database.DBConnection;
 import model.SanPham;
+import exception.DatabaseException;
+import exception.NotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 /**
  *
@@ -40,12 +43,10 @@ public class SanPhamDao {
 
                 ds.add(sp);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy danh sách sản phẩm", e);
         }
-
-        return ds;
     }
 
     // Thêm sản phẩm
@@ -65,11 +66,9 @@ public class SanPhamDao {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi thêm sản phẩm", e);
         }
-
-        return false;
     }
 
     // Sửa sản phẩm
@@ -93,13 +92,17 @@ public class SanPhamDao {
             ps.setInt(3, sp.getSoLuongTonKho());
             ps.setString(4, sp.getMaSP());
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy sản phẩm để cập nhật: " + sp.getMaSP());
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi cập nhật sản phẩm", e);
         }
-
-        return false;
     }
 
     // Xóa sản phẩm
@@ -114,13 +117,17 @@ public class SanPhamDao {
 
             ps.setString(1, maSP);
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy sản phẩm để xóa: " + maSP);
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi xóa sản phẩm", e);
         }
-
-        return false;
     }
 
     // Tìm sản phẩm theo mã
@@ -146,12 +153,11 @@ public class SanPhamDao {
                         rs.getInt("soLuongTonKho")
                 );
             }
+            throw new NotFoundException("Không tìm thấy sản phẩm: " + maSP);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi tìm sản phẩm theo mã", e);
         }
-
-        return null;
     }
 
     // Sắp xếp giá tăng dần
@@ -181,12 +187,10 @@ public class SanPhamDao {
                         rs.getInt("soLuongTonKho")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp giá tăng dần", e);
         }
-
-        return ds;
     }
 
     // Sắp xếp giá giảm dần
@@ -216,12 +220,10 @@ public class SanPhamDao {
                         rs.getInt("soLuongTonKho")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp giá giảm dần", e);
         }
-
-        return ds;
     }
 }
 

@@ -6,10 +6,13 @@ package dao;
 
 import database.DBConnection;
 import model.NhanVien;
+import exception.DatabaseException;
+import exception.NotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 /**
  *
@@ -41,12 +44,10 @@ public class NhanVienDao {
 
                 ds.add(nv);
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy danh sách nhân viên", e);
         }
-
-        return ds;
     }
 
     // Thêm nhân viên
@@ -67,11 +68,9 @@ public class NhanVienDao {
 
             return ps.executeUpdate() > 0;
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi thêm nhân viên", e);
         }
-
-        return false;
     }
 
     // Sửa nhân viên
@@ -97,13 +96,17 @@ public class NhanVienDao {
             ps.setDouble(4, nv.getLuong());
             ps.setString(5, nv.getMaNV());
 
-            return ps.executeUpdate() > 0;
+             int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy nhân viên: " + nv.getMaNV());
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi cập nhật nhân viên", e);
         }
-
-        return false;
     }
 
     // Xóa nhân viên
@@ -118,13 +121,17 @@ public class NhanVienDao {
 
             ps.setString(1, maNV);
 
-            return ps.executeUpdate() > 0;
+            int rows = ps.executeUpdate();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+            if (rows == 0) {
+                throw new NotFoundException("Không tìm thấy nhân viên: " + maNV);
+            }
+
+            return true;
+
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi xóa nhân viên", e);
         }
-
-        return false;
     }
 
     // Tìm nhân viên theo mã
@@ -151,12 +158,11 @@ public class NhanVienDao {
                         rs.getDouble("luong")
                 );
             }
+            throw new NotFoundException("Không tìm thấy nhân viên: " + maNV);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi tìm nhân viên theo mã", e);
         }
-
-        return null;
     }
 
     // Sắp xếp lương tăng dần
@@ -183,12 +189,10 @@ public class NhanVienDao {
                         rs.getDouble("luong")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp lương tăng dần", e);
         }
-
-        return ds;
     }
 
     // Sắp xếp lương giảm dần
@@ -215,11 +219,9 @@ public class NhanVienDao {
                         rs.getDouble("luong")
                 ));
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return ds;
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi sắp xếp lương giảm dần", e);
         }
-
-        return ds;
     }
 }

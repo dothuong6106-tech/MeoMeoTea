@@ -6,10 +6,13 @@ package dao;
 
 import database.DBConnection;
 import model.TaiKhoan;
+import exception.DatabaseException;
+import exception.NotFoundException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 /**
  *
  * @author DELL
@@ -32,11 +35,9 @@ public class TaiKhoanDao {
 
             return rs.next();
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi kiểm tra tồn tại tài khoản", e);
         }
-
-        return false;
     }
 
     // Đăng nhập
@@ -63,12 +64,11 @@ public class TaiKhoanDao {
                         rs.getString("vaiTro")
                 );
             }
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            throw new NotFoundException("Sai tên đăng nhập hoặc mật khẩu");
+        
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi khi đăng nhập", e);
         }
-
-        return null;
     }
 
     // Lấy vai trò theo tên đăng nhập
@@ -89,12 +89,11 @@ public class TaiKhoanDao {
             if (rs.next()) {
                 return rs.getString("vaiTro");
             }
+            throw new NotFoundException("Không tìm thấy tài khoản: " + tenDangNhap);
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (SQLException e) {
+            throw new DatabaseException("Lỗi lấy vai trò tài khoản", e);
         }
-
-        return null;
     }
 }
 
