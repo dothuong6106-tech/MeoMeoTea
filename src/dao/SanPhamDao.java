@@ -131,16 +131,16 @@ public class SanPhamDao {
     }
 
     // Tìm sản phẩm theo mã
-    public SanPham findById(String maSP) {
+    public SanPham findByName(String tenSP) {
 
-        String sql = "SELECT * FROM SanPham WHERE maSP = ?";
+        String sql = "SELECT * FROM SanPham WHERE tenSP LIKE ?";
 
         try {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(sql);
 
-            ps.setString(1, maSP);
+            ps.setString(1, "%" + tenSP + "%");
 
             ResultSet rs = ps.executeQuery();
 
@@ -153,10 +153,10 @@ public class SanPhamDao {
                         rs.getInt("soLuongTonKho")
                 );
             }
-            throw new NotFoundException("Không tìm thấy sản phẩm: " + maSP);
+            throw new NotFoundException("Không tìm thấy sản phẩm: " + tenSP);
 
         } catch (SQLException e) {
-            throw new DatabaseException("Lỗi tìm sản phẩm theo mã", e);
+            throw new DatabaseException("Lỗi tìm sản phẩm theo tên", e);
         }
     }
 

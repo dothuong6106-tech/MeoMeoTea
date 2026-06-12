@@ -131,16 +131,16 @@ public class KhachHangDao {
     }
 
     // Tìm khách hàng theo mã
-    public KhachHang findById(String maKH) {
+    public KhachHang findByName(String tenKH) {
 
-        String sql = "SELECT * FROM KhachHang WHERE maKH = ?";
+        String sql = "SELECT * FROM KhachHang WHERE tenKH LIKE ?";
 
         try {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(sql);
 
-            ps.setString(1, maKH);
+            ps.setString(1, "%" + tenKH + "%");
 
             ResultSet rs = ps.executeQuery();
 
@@ -153,10 +153,10 @@ public class KhachHangDao {
                         rs.getString("diaChi")
                 );
             }
-            throw new NotFoundException("Không tìm thấy khách hàng: " + maKH);
+            throw new NotFoundException("Không tìm thấy khách hàng: " + tenKH);
 
         } catch (SQLException e) {
-            throw new DatabaseException("Lỗi tìm khách hàng theo mã", e);
+            throw new DatabaseException("Lỗi tìm khách hàng theo tên", e);
         }
     }
 }

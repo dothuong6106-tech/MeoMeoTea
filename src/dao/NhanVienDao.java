@@ -135,16 +135,16 @@ public class NhanVienDao {
     }
 
     // Tìm nhân viên theo mã
-    public NhanVien findById(String maNV) {
+    public NhanVien findByName(String tenNV) {
 
-        String sql = "SELECT * FROM NhanVien WHERE maNV = ?";
+        String sql = "SELECT * FROM NhanVien WHERE tenNV LIKE ?";
 
         try {
             Connection con = DBConnection.getConnection();
 
             PreparedStatement ps = con.prepareStatement(sql);
 
-            ps.setString(1, maNV);
+            ps.setString(1, "%" + tenNV + "%");
 
             ResultSet rs = ps.executeQuery();
 
@@ -158,10 +158,10 @@ public class NhanVienDao {
                         rs.getDouble("luong")
                 );
             }
-            throw new NotFoundException("Không tìm thấy nhân viên: " + maNV);
+            throw new NotFoundException("Không tìm thấy nhân viên: " + tenNV);
 
         } catch (SQLException e) {
-            throw new DatabaseException("Lỗi tìm nhân viên theo mã", e);
+            throw new DatabaseException("Lỗi tìm nhân viên theo tên", e);
         }
     }
 
